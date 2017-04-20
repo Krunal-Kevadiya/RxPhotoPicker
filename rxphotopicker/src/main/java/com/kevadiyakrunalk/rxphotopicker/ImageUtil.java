@@ -9,8 +9,7 @@ import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
-
-import com.kevadiyakrunalk.commonutils.common.Logs;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -212,7 +211,7 @@ public class ImageUtil {
                     subscriber.onNext(file);
                     subscriber.onCompleted();
                 } catch (Exception e) {
-                    Logs.getInstance(context).error("Image Util", "Error converting uri" + e.toString());
+                    Log.e("Image Util", "Error converting uri" + e.toString());
                     subscriber.onError(e);
                 }
             }
@@ -230,7 +229,7 @@ public class ImageUtil {
                         InputStream inputStream = context.getContentResolver().openInputStream(uri.get(i));
                         copyInputStreamToFile(inputStream, file.get(i));
                     } catch (Exception e) {
-                        Logs.getInstance(context).error("Image Util", "Error converting uri" + e.toString());
+                        Log.e("Image Util", "Error converting uri" + e.toString());
                         subscriber.onError(e);
                     }
                 }
@@ -250,7 +249,7 @@ public class ImageUtil {
                     subscriber.onNext(bitmap);
                     subscriber.onCompleted();
                 } catch (Exception e) {
-                    Logs.getInstance(context).error("Image Util", "Error converting uri" + e.toString());
+                    Log.e("Image Util", "Error converting uri" + e.toString());
                     subscriber.onError(e);
                 }
             }
@@ -268,7 +267,7 @@ public class ImageUtil {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri1);
                         bitmaps.add(bitmap);
                     } catch (Exception e) {
-                        Logs.getInstance(context).error("Image Util", "Error converting uri" + e.toString());
+                        Log.e("Image Util", "Error converting uri" + e.toString());
                         subscriber.onError(e);
                     }
                 }

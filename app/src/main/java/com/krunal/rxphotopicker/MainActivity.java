@@ -6,12 +6,15 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.kevadiyakrunalk.rxpermissions.PermissionResult;
+import com.kevadiyakrunalk.rxpermissions.DialogCallback;
+import com.kevadiyakrunalk.rxpermissions.PermissionCallback;
+import com.kevadiyakrunalk.rxpermissions.PermissionStatus;
 import com.kevadiyakrunalk.rxpermissions.RxPermissions;
 import com.kevadiyakrunalk.rxphotopicker.CropOption;
 import com.kevadiyakrunalk.rxphotopicker.PhotoInterface;
@@ -39,30 +42,22 @@ public class MainActivity extends AppCompatActivity {
         builder.setOutputHW(690, 690);
         builder.setAspectRatio(3, 2);
         builder.setScale(true);
-        RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        RxPhotoPicker.getInstance(context)
+                .pickSingleImage(Sources.GALLERY, Transformers.URI, true, builder, new PhotoInterface<Uri>() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
-                            RxPhotoPicker.getInstance(context)
-                                    .pickSingleImage(Sources.GALLERY, Transformers.URI, true, builder, new PhotoInterface<Uri>() {
-                                        @Override
-                                        public void onPhotoResult(Uri uri) {
-                                            if (uri != Uri.EMPTY) {
-                                                Log.e("gallery", "Uri -> " + uri);
-                                                imageView.setImageURI(uri);
-                                            } else
-                                                Log.e("gallery", "Uri -> EMPTY");
-                                        }
-                                    });
-                        }
+                    public void onPhotoResult(Uri uri) {
+                        if (uri != Uri.EMPTY) {
+                            Log.e("gallery", "Uri -> " + uri);
+                            imageView.setImageURI(uri);
+                        } else
+                            Log.e("gallery", "Uri -> EMPTY");
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE);
+                }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
     }
 
     public void onGalleryBitmap(View view) {
-        RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        /*RxPermissions.getInstance(context)
+                .checkMPermission(new PermissionChecker.PermissionResult() {
                     @Override
                     public void onPermissionResult(String permission, boolean granted) {
                         if (granted) {
@@ -79,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE);
+                }, Manifest.permission.READ_EXTERNAL_STORAGE);*/
     }
 
     public void onGalleryFile(View view) {
-        RxPermissions.getInstance(context)
+        /*RxPermissions.getInstance(context)
                 .checkMPermission(new PermissionResult() {
                     @Override
                     public void onPermissionResult(String permission, boolean granted) {
@@ -101,11 +96,11 @@ public class MainActivity extends AppCompatActivity {
                                     }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);*/
     }
 
     public void onCameraUri(View view) {
-        RxPermissions.getInstance(context)
+        /*RxPermissions.getInstance(context)
                 .checkMPermission(new PermissionResult() {
                     @Override
                     public void onPermissionResult(String permission, boolean granted) {
@@ -123,11 +118,11 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);*/
     }
 
     public void onCameraBitmap(View view) {
-        RxPermissions.getInstance(context)
+        /*RxPermissions.getInstance(context)
                 .checkMPermission(new PermissionResult() {
                     @Override
                     public void onPermissionResult(String permission, boolean granted) {
@@ -146,11 +141,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);*/
     }
 
     public void onCameraFile(View view) {
-        RxPermissions.getInstance(context)
+        /*RxPermissions.getInstance(context)
                 .checkMPermission(new PermissionResult() {
                     @Override
                     public void onPermissionResult(String permission, boolean granted) {
@@ -168,11 +163,11 @@ public class MainActivity extends AppCompatActivity {
                                     }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);*/
     }
 
     public void onGalleryMultipleUri(View view) {
-        RxPermissions.getInstance(context)
+        /*RxPermissions.getInstance(context)
                 .checkMPermission(new PermissionResult() {
                     @Override
                     public void onPermissionResult(String permission, boolean granted) {
@@ -192,11 +187,11 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE);
+                }, Manifest.permission.READ_EXTERNAL_STORAGE);*/
     }
 
     public void onGalleryMultipleBitmap(View view) {
-        RxPermissions.getInstance(context)
+        /*RxPermissions.getInstance(context)
                 .checkMPermission(new PermissionResult() {
                     @Override
                     public void onPermissionResult(String permission, boolean granted) {
@@ -216,11 +211,11 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE);
+                }, Manifest.permission.READ_EXTERNAL_STORAGE);*/
     }
 
     public void onGalleryMultipleFile(View view) {
-        RxPermissions.getInstance(context)
+        /*RxPermissions.getInstance(context)
                 .checkMPermission(new PermissionResult() {
                     @Override
                     public void onPermissionResult(String permission, boolean granted) {
@@ -240,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                                     }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);*/
     }
 
     public String fileSize(long size) {
