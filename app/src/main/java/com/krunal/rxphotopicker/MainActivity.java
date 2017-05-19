@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -42,25 +41,48 @@ public class MainActivity extends AppCompatActivity {
         builder.setOutputHW(690, 690);
         builder.setAspectRatio(3, 2);
         builder.setScale(true);
-        RxPhotoPicker.getInstance(context)
-                .pickSingleImage(Sources.GALLERY, Transformers.URI, true, builder, new PhotoInterface<Uri>() {
+
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_library), getString(R.string.msg_ration_library))
+                .showAccessRemovedDialog(getString(R.string.title_permission_library), getString(R.string.msg_setting_library))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPhotoResult(Uri uri) {
-                        if (uri != Uri.EMPTY) {
-                            Log.e("gallery", "Uri -> " + uri);
-                            imageView.setImageURI(uri);
-                        } else
-                            Log.e("gallery", "Uri -> EMPTY");
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
+                            RxPhotoPicker.getInstance(context)
+                                    .pickSingleImage(Sources.GALLERY, Transformers.URI, true, builder, new PhotoInterface<Uri>() {
+                                        @Override
+                                        public void onPhotoResult(Uri uri) {
+                                            if (uri != Uri.EMPTY) {
+                                                Log.e("gallery", "Uri -> " + uri);
+                                                imageView.setImageURI(uri);
+                                            } else
+                                                Log.e("gallery", "Uri -> EMPTY");
+                                        }
+                                    }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+                        }
                     }
-                }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     public void onGalleryBitmap(View view) {
-        /*RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionChecker.PermissionResult() {
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_library), getString(R.string.msg_ration_library))
+                .showAccessRemovedDialog(getString(R.string.title_permission_library), getString(R.string.msg_setting_library))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
                             RxPhotoPicker.getInstance(context)
                                     .pickSingleImage(Sources.GALLERY, Transformers.BITMAP, true, new PhotoInterface<Bitmap>() {
                                         @Override
@@ -74,15 +96,26 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE);*/
+
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     public void onGalleryFile(View view) {
-        /*RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_library), getString(R.string.msg_ration_library))
+                .showAccessRemovedDialog(getString(R.string.title_permission_library), getString(R.string.msg_setting_library))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
                             RxPhotoPicker.getInstance(context)
                                     .pickSingleImage(Sources.GALLERY, Transformers.FILE, true, new PhotoInterface<File>() {
                                         @Override
@@ -96,15 +129,28 @@ public class MainActivity extends AppCompatActivity {
                                     }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);*/
+
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
+
+
     public void onCameraUri(View view) {
-        /*RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_camera), getString(R.string.msg_ration_camera))
+                .showAccessRemovedDialog(getString(R.string.title_permission_camera), getString(R.string.msg_setting_camera))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
                             RxPhotoPicker.getInstance(context)
                                     .pickSingleImage(Sources.CAMERA, Transformers.URI, true, new PhotoInterface<Uri>() {
                                         @Override
@@ -118,15 +164,26 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);*/
+
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     public void onCameraBitmap(View view) {
-        /*RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_camera), getString(R.string.msg_ration_camera))
+                .showAccessRemovedDialog(getString(R.string.title_permission_camera), getString(R.string.msg_setting_camera))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
                             RxPhotoPicker.getInstance(context)
                                     .pickSingleImage(Sources.CAMERA, Transformers.BITMAP, true, new PhotoInterface<Bitmap>() {
                                         @Override
@@ -141,15 +198,25 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);*/
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     public void onCameraFile(View view) {
-        /*RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_camera), getString(R.string.msg_ration_camera))
+                .showAccessRemovedDialog(getString(R.string.title_permission_camera), getString(R.string.msg_setting_camera))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
                             RxPhotoPicker.getInstance(context)
                                     .pickSingleImage(Sources.CAMERA, Transformers.FILE, true, new PhotoInterface<File>() {
                                         @Override
@@ -163,15 +230,28 @@ public class MainActivity extends AppCompatActivity {
                                     }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA);*/
+
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
+
+
     public void onGalleryMultipleUri(View view) {
-        /*RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_library), getString(R.string.msg_ration_library))
+                .showAccessRemovedDialog(getString(R.string.title_permission_library), getString(R.string.msg_setting_library))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
                             RxPhotoPicker.getInstance(context)
                                     .pickMultipleImage(Transformers.URI, new PhotoInterface<List<Uri>>() {
                                         @Override
@@ -187,15 +267,26 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE);*/
+
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     public void onGalleryMultipleBitmap(View view) {
-        /*RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_library), getString(R.string.msg_ration_library))
+                .showAccessRemovedDialog(getString(R.string.title_permission_library), getString(R.string.msg_setting_library))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
                             RxPhotoPicker.getInstance(context)
                                     .pickMultipleImage(Transformers.BITMAP, new PhotoInterface<List<Bitmap>>() {
                                         @Override
@@ -211,15 +302,26 @@ public class MainActivity extends AppCompatActivity {
                                     });
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE);*/
+
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     public void onGalleryMultipleFile(View view) {
-        /*RxPermissions.getInstance(context)
-                .checkMPermission(new PermissionResult() {
+        RxPermissions.getInstance()
+                .with(this)
+                .showRationalDialog(getString(R.string.title_permission_library), getString(R.string.msg_ration_library))
+                .showAccessRemovedDialog(getString(R.string.title_permission_library), getString(R.string.msg_setting_library))
+                .checkPermission(true, true, new PermissionCallback() {
                     @Override
-                    public void onPermissionResult(String permission, boolean granted) {
-                        if (granted) {
+                    public void onPermission(PermissionStatus permissionStatus, String... strings) {
+                        if (permissionStatus == PermissionStatus.GRANTED) {
                             RxPhotoPicker.getInstance(context)
                                     .pickMultipleImage(Transformers.FILE, new PhotoInterface<List<File>>() {
                                         @Override
@@ -235,7 +337,15 @@ public class MainActivity extends AppCompatActivity {
                                     }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
                         }
                     }
-                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);*/
+
+                    @Override
+                    public void onRational(DialogCallback dialogCallback, String... strings) {
+                    }
+
+                    @Override
+                    public void onAccessRemoved(DialogCallback dialogCallback, String... strings) {
+                    }
+                }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     public String fileSize(long size) {
