@@ -13,8 +13,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-
-import com.kevadiyakrunalk.commonutils.common.Logs;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -758,11 +757,11 @@ public class FileUtil {
         if (!newFile.equals(file)) {
             if (newFile.exists()) {
                 if (newFile.delete()) {
-                    Logs.getInstance(context).debug("FileUtil", "Delete old " + newName + " file");
+                    Log.e("FileUtil", "Delete old " + newName + " file");
                 }
             }
             if (file.renameTo(newFile)) {
-                Logs.getInstance(context).debug("FileUtil", "Rename file to " + newName);
+                Log.e("FileUtil", "Rename file to " + newName);
             }
         }
         return newFile;

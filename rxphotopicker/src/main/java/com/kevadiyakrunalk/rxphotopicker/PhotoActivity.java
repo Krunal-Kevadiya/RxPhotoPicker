@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -84,7 +83,6 @@ public class PhotoActivity extends Activity {
             finish();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void handleGalleryResult(Intent data) {
         if (getIntent().getBooleanExtra(ALLOW_MULTIPLE_IMAGES, false)) {
             ArrayList<Uri> imageUris = new ArrayList<>();
