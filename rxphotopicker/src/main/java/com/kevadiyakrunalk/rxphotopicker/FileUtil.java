@@ -762,6 +762,10 @@ public class FileUtil {
             }
             if (file.renameTo(newFile)) {
                 Log.e("FileUtil", "Rename file to " + newName);
+                Log.d("FileUtil", "Delete old " + newName + " file");
+            }
+            if (file.renameTo(newFile)) {
+                Log.d("FileUtil", "Rename file to " + newName);
             }
         }
         return newFile;

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">RxPhotoPicker</string>
+
+    <string name="title_permission_camera">Allow camera and storage permission</string>
+    <string name="msg_ration_camera">Without camera and storage permission we are unable to take video or save. Go ahead and grand permission.</string>
+    <string name="msg_setting_camera">Without camera and storage permission we are unable to take video or save. Go Setting and grand permission.</string>
+    <string name="msg_error_camera">Without camera and storage permission we are unable to use this feature.</string>
+
+    <string name="title_permission_library">Allow storage permission</string>
+    <string name="msg_ration_library">Without storage permission we are unable to get video file. Go ahead and grand permission.</string>
+    <string name="msg_setting_library">Without storage permission we are unable to get video file. Go Setting and grand permission.</string>
+    <string name="msg_error_library">Without storage permission we are unable to use this feature.</string>
 </resources>

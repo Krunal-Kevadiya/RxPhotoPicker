@@ -162,7 +162,7 @@ public class PhotoActivity extends Activity {
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
                 startActivityForResult(i, Constant.CROPING_CODE);
             } else  {
-                Intent i   = new Intent(intent);
+                Intent i = new Intent(intent);
                 i.putExtra(Intent.EXTRA_INITIAL_INTENTS, list.toArray(new Parcelable[list.size()]));
                 startActivityForResult(i, Constant.CROPING_CODE);
             }
