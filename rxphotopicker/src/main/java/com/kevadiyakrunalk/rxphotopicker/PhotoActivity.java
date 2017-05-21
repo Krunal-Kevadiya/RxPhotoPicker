@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+
 /**
  * The type Photo activity.
  */
@@ -35,10 +37,13 @@ public class PhotoActivity extends Activity {
     public static final String ALLOW_IMAGE_CROP = "allow_image_crop";
 
     private Uri cameraPictureUrl, cropPictureUrl;
+    private RxPhotoPicker rxPhotoPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        rxPhotoPicker = RxPhotoPicker.getInstance();
         if (savedInstanceState == null) {
             handleIntent(getIntent());
         }
@@ -75,7 +80,7 @@ public class PhotoActivity extends Activity {
                     break;
 
                 case Constant.CROPING_CODE:
-                    RxPhotoPicker.getInstance(getApplicationContext()).onImagePicked(cropPictureUrl);
+                    rxPhotoPicker.onImagePicked(cropPictureUrl);
                     finish();
                     break;
             }
@@ -95,21 +100,20 @@ public class PhotoActivity extends Activity {
             } else {
                 imageUris.add(data.getData());
             }
-            RxPhotoPicker.getInstance(getApplicationContext()).onImagesPicked(imageUris);
+            rxPhotoPicker.onImagesPicked(imageUris);
             finish();
         } else {
             if(getIntent().getBooleanExtra(ALLOW_IMAGE_CROP, false)) {
                 try {
-                    cropPictureUrl = Uri.fromFile(FileUtil.getInstance(getApplicationContext())
-                            .createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)));
+                    cropPictureUrl = Uri.fromFile(rxPhotoPicker.getFileUtil().createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
                     CropingIMG(data.getData(), cropPictureUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    RxPhotoPicker.getInstance(getApplicationContext()).onImagePicked(Uri.EMPTY);
+                    rxPhotoPicker.onImagePicked(Uri.EMPTY);
                     finish();
                 }
             } else {
-                RxPhotoPicker.getInstance(getApplicationContext()).onImagePicked(data.getData());
+                rxPhotoPicker.onImagePicked(data.getData());
                 finish();
             }
         }
@@ -118,16 +122,15 @@ public class PhotoActivity extends Activity {
     private void handleCameraResult(Uri cameraPictureUrl) {
         if(getIntent().getBooleanExtra(ALLOW_IMAGE_CROP, false)) {
             try{
-                cropPictureUrl = Uri.fromFile(FileUtil.getInstance(getApplicationContext())
-                        .createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)));
+                cropPictureUrl = Uri.fromFile(rxPhotoPicker.getFileUtil().createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
                 CropingIMG(cameraPictureUrl, cropPictureUrl);
             } catch (IOException e) {
                 e.printStackTrace();
-                RxPhotoPicker.getInstance(getApplicationContext()).onImagePicked(Uri.EMPTY);
+                rxPhotoPicker.onImagePicked(Uri.EMPTY);
                 finish();
             }
         } else {
-            RxPhotoPicker.getInstance(getApplicationContext()).onImagePicked(cameraPictureUrl);
+            rxPhotoPicker.onImagePicked(cameraPictureUrl);
             finish();
         }
     }
@@ -142,11 +145,11 @@ public class PhotoActivity extends Activity {
             Toast.makeText(this, "Cann't find image croping app", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            CropOption.Builder cropBuilder = RxPhotoPicker.getInstance(getApplicationContext()).getBuilder();
+            CropOption.Builder cropBuilder = rxPhotoPicker.getBuilder();
             if(cropBuilder == null)
                 cropBuilder = new CropOption.Builder();
 
-            intent.setData(sourceImage);
+            intent.setDataAndType(sourceImage, "image/*");
             intent.putExtra("outputX", cropBuilder.getOutputX());
             intent.putExtra("outputY", cropBuilder.getOutputY());
             intent.putExtra("aspectX", cropBuilder.getAspectX());
@@ -176,16 +179,21 @@ public class PhotoActivity extends Activity {
 
         switch (sourceType) {
             case CAMERA:
-                cameraPictureUrl = FileUtil.getInstance(getApplicationContext()).createImageUri();
+                cameraPictureUrl = rxPhotoPicker.getFileUtil().getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
                 pictureChooseIntent[0] = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 pictureChooseIntent[0].putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl);
                 chooseCode[0] = Constant.TAKE_PHOTO;
                 startActivityForResult(pictureChooseIntent[0], chooseCode[0]);
                 break;
             case GALLERY:
                 if(getIntent().getBooleanExtra(ALLOW_MULTIPLE_IMAGES, false)) {
-                    pictureChooseIntent[0] = new Intent();
-                    pictureChooseIntent[0].putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    pictureChooseIntent[0] = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                        pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+                        pictureChooseIntent[0].putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                     pictureChooseIntent[0].setAction(Intent.ACTION_GET_CONTENT);
                     pictureChooseIntent[0].setType("image/*");
                     chooseCode[0] = Constant.SELECT_PHOTO;
@@ -194,7 +202,6 @@ public class PhotoActivity extends Activity {
                     pictureChooseIntent[0] = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
                         pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                    pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     pictureChooseIntent[0].setType("image/*");
                     chooseCode[0] = Constant.SELECT_PHOTO;
                     startActivityForResult(pictureChooseIntent[0], chooseCode[0]);

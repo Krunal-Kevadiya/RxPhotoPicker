@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,29 +24,38 @@ public class RxPhotoPicker {
     private static RxPhotoPicker sSingleton;
 
     private Context context;
+    private FileUtil fileUtil;
     private CropOption.Builder builder;
     private PublishSubject<Uri> publishSubject;
     private PublishSubject<List<Uri>> publishSubjectMultipleImages;
 
-    private RxPhotoPicker(Context ctx) {
-        context = ctx;
+    private RxPhotoPicker() {
     }
 
     /**
      * Gets instance.
      *
-     * @param ctx the ctx
      * @return the instance
      */
-    public static RxPhotoPicker getInstance(Context ctx) {
+    public static RxPhotoPicker getInstance() {
         if (sSingleton == null) {
             synchronized (RxPhotoPicker.class) {
                 if (sSingleton == null) {
-                    sSingleton = new RxPhotoPicker(ctx);
+                    sSingleton = new RxPhotoPicker();
                 }
             }
         }
         return sSingleton;
+    }
+
+    public RxPhotoPicker with(Context ctx) {
+        context = ctx;
+        fileUtil = new FileUtil(context);
+        return sSingleton;
+    }
+
+    public FileUtil getFileUtil() {
+        return fileUtil;
     }
 
     /**
@@ -124,10 +134,9 @@ public class RxPhotoPicker {
      * @param sources      the sources
      * @param transformers the transformers
      * @param result       the result
-     * @param filePathDir  the file path dir
      */
-    //User use to activity
-    public void pickSingleImage(Sources sources, Transformers transformers, PhotoInterface result, File... filePathDir) {
+    @SuppressWarnings("unchecked")
+    public void pickSingleImage(Sources sources, Transformers transformers, PhotoInterface result) {
         if (transformers == Transformers.FILE) {
             requestImage(sources, false)
                     .flatMap(new Func1<Uri, Observable<File>>() {
@@ -135,40 +144,34 @@ public class RxPhotoPicker {
                         public Observable<File> call(Uri uri) {
                             File filePath = null;
                             try {
-                                if (filePathDir.length > 0)
-                                    filePath = FileUtil.getInstance(context).createImageTempFile(filePathDir[0]);
-                            }catch (IOException e) {
+                                filePath = fileUtil.createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
+                            } catch (IOException e) {
                                 e.printStackTrace();
                             }
                             if(filePath != null)
-                                return ImageUtil.getInstance(context).uriToFile(uri, filePath);
+                                return fileUtil.uriToFile(uri, filePath);
                             else
                                 return null;
                         }
                     })
-                    .subscribe(file -> {
-                        result.onPhotoResult(file);
-                    });
+                    .subscribe(result::onPhotoResult);
         } else if (transformers == Transformers.BITMAP) {
             requestImage(sources, false)
                     .flatMap(new Func1<Uri, Observable<Bitmap>>() {
                         @Override
                         public Observable<Bitmap> call(Uri uri) {
-                            return ImageUtil.getInstance(context).uriToBitmap(uri);
+                            return fileUtil.uriToBitmap(uri);
                         }
                     })
-                    .subscribe(bitmap -> {
-                        result.onPhotoResult(bitmap);
-                    });
+                    .subscribe(result::onPhotoResult);
         } else {
             requestImage(sources, false)
-                    .subscribe(uri -> {
-                        result.onPhotoResult(uri);
-                    });
+                    .subscribe(result::onPhotoResult);
         }
     }
 
-    public void pickSingleImage(Sources sources, Transformers transformers, boolean allowImageCrop, PhotoInterface result, File... filePathDir) {
+    @SuppressWarnings("unchecked")
+    public void pickSingleImage(Sources sources, Transformers transformers, boolean allowImageCrop, PhotoInterface result) {
         builder = new CropOption.Builder();
         if (transformers == Transformers.FILE) {
             requestImage(sources, allowImageCrop)
@@ -177,40 +180,34 @@ public class RxPhotoPicker {
                         public Observable<File> call(Uri uri) {
                             File filePath = null;
                             try {
-                                if (filePathDir.length > 0)
-                                    filePath = FileUtil.getInstance(context).createImageTempFile(filePathDir[0]);
+                                filePath = fileUtil.createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
                             }catch (IOException e) {
                                 e.printStackTrace();
                             }
                             if(filePath != null)
-                                return ImageUtil.getInstance(context).uriToFile(uri, filePath);
+                                return fileUtil.uriToFile(uri, filePath);
                             else
                                 return null;
                         }
                     })
-                    .subscribe(file -> {
-                        result.onPhotoResult(file);
-                    });
+                    .subscribe(result::onPhotoResult);
         } else if (transformers == Transformers.BITMAP) {
             requestImage(sources, allowImageCrop)
                     .flatMap(new Func1<Uri, Observable<Bitmap>>() {
                         @Override
                         public Observable<Bitmap> call(Uri uri) {
-                            return ImageUtil.getInstance(context).uriToBitmap(uri);
+                            return fileUtil.uriToBitmap(uri);
                         }
                     })
-                    .subscribe(bitmap -> {
-                        result.onPhotoResult(bitmap);
-                    });
+                    .subscribe(result::onPhotoResult);
         } else {
             requestImage(sources, allowImageCrop)
-                    .subscribe(uri -> {
-                        result.onPhotoResult(uri);
-                    });
+                    .subscribe(result::onPhotoResult);
         }
     }
 
-    public void pickSingleImage(Sources sources, Transformers transformers, boolean allowImageCrop, CropOption.Builder builder, PhotoInterface result, File... filePathDir) {
+    @SuppressWarnings("unchecked")
+    public void pickSingleImage(Sources sources, Transformers transformers, boolean allowImageCrop, CropOption.Builder builder, PhotoInterface result) {
         this.builder = builder;
         if (transformers == Transformers.FILE) {
             requestImage(sources, allowImageCrop)
@@ -219,36 +216,29 @@ public class RxPhotoPicker {
                         public Observable<File> call(Uri uri) {
                             File filePath = null;
                             try {
-                                if (filePathDir.length > 0)
-                                    filePath = FileUtil.getInstance(context).createImageTempFile(filePathDir[0]);
+                                filePath = fileUtil.createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
                             }catch (IOException e) {
                                 e.printStackTrace();
                             }
                             if(filePath != null)
-                                return ImageUtil.getInstance(context).uriToFile(uri, filePath);
+                                return fileUtil.uriToFile(uri, filePath);
                             else
                                 return null;
                         }
                     })
-                    .subscribe(file -> {
-                        result.onPhotoResult(file);
-                    });
+                    .subscribe(result::onPhotoResult);
         } else if (transformers == Transformers.BITMAP) {
             requestImage(sources, allowImageCrop)
                     .flatMap(new Func1<Uri, Observable<Bitmap>>() {
                         @Override
                         public Observable<Bitmap> call(Uri uri) {
-                            return ImageUtil.getInstance(context).uriToBitmap(uri);
+                            return fileUtil.uriToBitmap(uri);
                         }
                     })
-                    .subscribe(bitmap -> {
-                        result.onPhotoResult(bitmap);
-                    });
+                    .subscribe(result::onPhotoResult);
         } else {
             requestImage(sources, allowImageCrop)
-                    .subscribe(uri -> {
-                        result.onPhotoResult(uri);
-                    });
+                    .subscribe(result::onPhotoResult);
         }
     }
 
@@ -257,50 +247,41 @@ public class RxPhotoPicker {
      *
      * @param transformers the transformers
      * @param result       the result
-     * @param filePathDir  the file path dir
      */
-    public void pickMultipleImage(Transformers transformers, PhotoInterface result, File... filePathDir) {
+    @SuppressWarnings("unchecked")
+    public void pickMultipleImage(Transformers transformers, PhotoInterface result) {
         if (transformers == Transformers.FILE) {
             requestMultipleImages()
                     .flatMap(new Func1<List<Uri>, Observable<List<File>>>() {
                         @Override
                         public Observable<List<File>> call(List<Uri> uris) {
-                            List<File> filePath = null;
-                            if(filePathDir.length > 0) {
-                                filePath = new ArrayList<>();
-                                int size = uris.size();
-                                try {
-                                    for(int i=0; i<size; i++)
-                                        filePath.add(FileUtil.getInstance(context).createImageTempFile(filePathDir[0]));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                            List<File> filePath = new ArrayList<>();
+                            int size = uris.size();
+                            try {
+                                for(int i=0; i<size; i++)
+                                    filePath.add(fileUtil.createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                            if(filePath != null)
-                                return ImageUtil.getInstance(context).uriToFile(uris, filePath);
+                            if(filePath.size() > 0)
+                                return fileUtil.uriToFile(uris, filePath);
                             else
                                 return null;
                         }
                     })
-                    .subscribe(files -> {
-                        result.onPhotoResult(files);
-                    });
+                    .subscribe(result::onPhotoResult);
         } else if (transformers == Transformers.BITMAP) {
             requestMultipleImages()
                     .flatMap(new Func1<List<Uri>, Observable<List<Bitmap>>>() {
                         @Override
                         public Observable<List<Bitmap>> call(List<Uri> uris) {
-                            return ImageUtil.getInstance(context).uriToBitmap(uris);
+                            return fileUtil.uriToBitmap(uris);
                         }
                     })
-                    .subscribe(bitmaps -> {
-                        result.onPhotoResult(bitmaps);
-                    });
+                    .subscribe(result::onPhotoResult);
         } else {
             requestMultipleImages()
-                    .subscribe(uris -> {
-                        result.onPhotoResult(uris);
-                    });
+                    .subscribe(result::onPhotoResult);
         }
     }
 }

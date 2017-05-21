@@ -11,5 +11,5 @@ public interface PhotoInterface<T> {
      *
      * @param t the t
      */
-    public void onPhotoResult(T t);
+    void onPhotoResult(T t);
 }

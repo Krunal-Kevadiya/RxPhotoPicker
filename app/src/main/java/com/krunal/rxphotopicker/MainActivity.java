@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickSingleImage(Sources.GALLERY, Transformers.URI, true, builder, new PhotoInterface<Uri>() {
                                         @Override
                                         public void onPhotoResult(Uri uri) {
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                                             } else
                                                 Log.e("gallery", "Uri -> EMPTY");
                                         }
-                                    }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+                                    });
                         }
                     }
 
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickSingleImage(Sources.GALLERY, Transformers.BITMAP, true, new PhotoInterface<Bitmap>() {
                                         @Override
                                         public void onPhotoResult(Bitmap bitmap) {
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickSingleImage(Sources.GALLERY, Transformers.FILE, true, new PhotoInterface<File>() {
                                         @Override
                                         public void onPhotoResult(File file) {
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                                             } else
                                                 Log.e("gallery", "File -> NULL");
                                         }
-                                    }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
+                                    });
                         }
                     }
 
@@ -151,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickSingleImage(Sources.CAMERA, Transformers.URI, true, new PhotoInterface<Uri>() {
                                         @Override
                                         public void onPhotoResult(Uri uri) {
@@ -184,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickSingleImage(Sources.CAMERA, Transformers.BITMAP, true, new PhotoInterface<Bitmap>() {
                                         @Override
                                         public void onPhotoResult(Bitmap bitmap) {
@@ -217,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickSingleImage(Sources.CAMERA, Transformers.FILE, true, new PhotoInterface<File>() {
                                         @Override
                                         public void onPhotoResult(File file) {
@@ -227,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                                             } else
                                                 Log.e("camera", "File -> NULL");
                                         }
-                                    }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
+                                    });
                         }
                     }
 
@@ -252,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickMultipleImage(Transformers.URI, new PhotoInterface<List<Uri>>() {
                                         @Override
                                         public void onPhotoResult(List<Uri> uri) {
@@ -287,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickMultipleImage(Transformers.BITMAP, new PhotoInterface<List<Bitmap>>() {
                                         @Override
                                         public void onPhotoResult(List<Bitmap> bitmap) {
@@ -322,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance(context)
+                            RxPhotoPicker.getInstance().with(context)
                                     .pickMultipleImage(Transformers.FILE, new PhotoInterface<List<File>>() {
                                         @Override
                                         public void onPhotoResult(List<File> file) {
@@ -334,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
                                                     Log.e("gallery multiple", "File -> NULL");
                                             }
                                         }
-                                    }, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));//context.getFilesDir());
+                                    });
                         }
                     }
 
