@@ -49,13 +49,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickSingleImage(Sources.GALLERY, Transformers.URI, true, builder, new PhotoInterface<Uri>() {
                                         @Override
                                         public void onPhotoResult(Uri uri) {
                                             if (uri != Uri.EMPTY) {
                                                 Log.e("gallery", "Uri -> " + uri);
-                                                imageView.setImageURI(uri);
+                                                imageView.setImageURI(Uri.fromFile(new File(uri.getPath())));
                                             } else
                                                 Log.e("gallery", "Uri -> EMPTY");
                                         }
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickSingleImage(Sources.GALLERY, Transformers.BITMAP, true, new PhotoInterface<Bitmap>() {
                                         @Override
                                         public void onPhotoResult(Bitmap bitmap) {
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickSingleImage(Sources.GALLERY, Transformers.FILE, true, new PhotoInterface<File>() {
                                         @Override
                                         public void onPhotoResult(File file) {
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickSingleImage(Sources.CAMERA, Transformers.URI, true, new PhotoInterface<Uri>() {
                                         @Override
                                         public void onPhotoResult(Uri uri) {
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickSingleImage(Sources.CAMERA, Transformers.BITMAP, true, new PhotoInterface<Bitmap>() {
                                         @Override
                                         public void onPhotoResult(Bitmap bitmap) {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickSingleImage(Sources.CAMERA, Transformers.FILE, true, new PhotoInterface<File>() {
                                         @Override
                                         public void onPhotoResult(File file) {
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickMultipleImage(Transformers.URI, new PhotoInterface<List<Uri>>() {
                                         @Override
                                         public void onPhotoResult(List<Uri> uri) {
@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickMultipleImage(Transformers.BITMAP, new PhotoInterface<List<Bitmap>>() {
                                         @Override
                                         public void onPhotoResult(List<Bitmap> bitmap) {
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermission(PermissionStatus permissionStatus, String... strings) {
                         if (permissionStatus == PermissionStatus.GRANTED) {
-                            RxPhotoPicker.getInstance().with(context)
+                            RxPhotoPicker.getInstance().with(MainActivity.this)
                                     .pickMultipleImage(Transformers.FILE, new PhotoInterface<List<File>>() {
                                         @Override
                                         public void onPhotoResult(List<File> file) {

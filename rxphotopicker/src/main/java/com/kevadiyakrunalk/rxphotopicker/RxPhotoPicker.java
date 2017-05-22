@@ -58,6 +58,10 @@ public class RxPhotoPicker {
         return fileUtil;
     }
 
+    public Context getContext() {
+        return context;
+    }
+
     /**
      * Gets active subscription.
      *

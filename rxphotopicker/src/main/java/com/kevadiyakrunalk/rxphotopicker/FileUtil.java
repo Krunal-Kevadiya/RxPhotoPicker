@@ -46,7 +46,7 @@ public class FileUtil {
     }
 
     public Uri getOutputMediaFileUri(int type) {
-        if (Build.VERSION.SDK_INT > 23) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             return FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", getOutputMediaFile(type));
         } else {
             return Uri.fromFile(getOutputMediaFile(type));

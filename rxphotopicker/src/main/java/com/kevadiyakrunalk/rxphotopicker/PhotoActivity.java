@@ -145,6 +145,12 @@ public class PhotoActivity extends Activity {
             Toast.makeText(this, "Cann't find image croping app", Toast.LENGTH_SHORT).show();
             finish();
         } else {
+            for (ResolveInfo resolvedIntentInfo : list) {
+                String packageName = resolvedIntentInfo.activityInfo.packageName;
+                rxPhotoPicker.getContext().grantUriPermission(packageName, sourceImage, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                rxPhotoPicker.getContext().grantUriPermission(packageName, destinationImage, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+
             CropOption.Builder cropBuilder = rxPhotoPicker.getBuilder();
             if(cropBuilder == null)
                 cropBuilder = new CropOption.Builder();
@@ -163,10 +169,18 @@ public class PhotoActivity extends Activity {
                 Intent i   = new Intent(intent);
                 ResolveInfo res = list.get(0);
                 i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
                 startActivityForResult(i, Constant.CROPING_CODE);
             } else  {
                 Intent i = new Intent(intent);
                 i.putExtra(Intent.EXTRA_INITIAL_INTENTS, list.toArray(new Parcelable[list.size()]));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
                 startActivityForResult(i, Constant.CROPING_CODE);
             }
         }
@@ -181,8 +195,10 @@ public class PhotoActivity extends Activity {
             case CAMERA:
                 cameraPictureUrl = rxPhotoPicker.getFileUtil().getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
                 pictureChooseIntent[0] = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
                 pictureChooseIntent[0].putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl);
                 chooseCode[0] = Constant.TAKE_PHOTO;
                 startActivityForResult(pictureChooseIntent[0], chooseCode[0]);
@@ -190,18 +206,22 @@ public class PhotoActivity extends Activity {
             case GALLERY:
                 if(getIntent().getBooleanExtra(ALLOW_MULTIPLE_IMAGES, false)) {
                     pictureChooseIntent[0] = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-                        pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
                         pictureChooseIntent[0].putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                        pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    }
                     pictureChooseIntent[0].setAction(Intent.ACTION_GET_CONTENT);
                     pictureChooseIntent[0].setType("image/*");
                     chooseCode[0] = Constant.SELECT_PHOTO;
                     startActivityForResult(Intent.createChooser(pictureChooseIntent[0],"Select Picture"), chooseCode[0]);
                 } else {
                     pictureChooseIntent[0] = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                        pictureChooseIntent[0].addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    }
                     pictureChooseIntent[0].setType("image/*");
                     chooseCode[0] = Constant.SELECT_PHOTO;
                     startActivityForResult(pictureChooseIntent[0], chooseCode[0]);
