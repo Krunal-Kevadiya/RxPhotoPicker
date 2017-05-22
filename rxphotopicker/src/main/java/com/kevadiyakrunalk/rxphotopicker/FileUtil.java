@@ -2,6 +2,7 @@ package com.kevadiyakrunalk.rxphotopicker;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -72,7 +73,6 @@ public class FileUtil {
 
     @SuppressWarnings("deprecation")
     public String compressImage(String imageUri) {
-
         String filePath = getRealPathFromURI(imageUri);
         Bitmap scaledBitmap = null;
 
@@ -297,7 +297,7 @@ public class FileUtil {
     }
 
     private String getFilename() {
-        String IMAGE_DIRECTORY_NAME = "/.ImageAsset";
+        String IMAGE_DIRECTORY_NAME = "/." + getApplicationName();
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), IMAGE_DIRECTORY_NAME);
         if (!mediaStorageDir.exists()) {
             //noinspection ResultOfMethodCallIgnored
@@ -305,6 +305,12 @@ public class FileUtil {
         }
         return (mediaStorageDir.getAbsolutePath() + "/" + "Avatar" + ".jpg");
 
+    }
+
+    public String getApplicationName() {
+        ApplicationInfo applicationInfo = context.getApplicationInfo();
+        int stringId = applicationInfo.labelRes;
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
     }
 
     public File getFile() {

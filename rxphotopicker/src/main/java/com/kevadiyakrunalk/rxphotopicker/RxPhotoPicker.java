@@ -1,5 +1,6 @@
 package com.kevadiyakrunalk.rxphotopicker;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import rx.subjects.PublishSubject;
  * The type Rx image picker.
  */
 public class RxPhotoPicker {
+    @SuppressLint("StaticFieldLeak")
     private static RxPhotoPicker sSingleton;
 
     private Context context;
@@ -200,6 +203,7 @@ public class RxPhotoPicker {
                     .flatMap(new Func1<Uri, Observable<Bitmap>>() {
                         @Override
                         public Observable<Bitmap> call(Uri uri) {
+                            Log.e("Uri", uri.toString());
                             return fileUtil.uriToBitmap(uri);
                         }
                     })
@@ -236,6 +240,7 @@ public class RxPhotoPicker {
                     .flatMap(new Func1<Uri, Observable<Bitmap>>() {
                         @Override
                         public Observable<Bitmap> call(Uri uri) {
+                            Log.e("Uri", uri.toString());
                             return fileUtil.uriToBitmap(uri);
                         }
                     })
