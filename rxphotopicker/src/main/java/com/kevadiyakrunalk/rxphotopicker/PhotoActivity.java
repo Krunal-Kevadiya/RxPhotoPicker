@@ -11,7 +11,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import java.io.File;
@@ -109,10 +110,16 @@ public class PhotoActivity extends Activity {
                 try {
                     cropPictureUrl = Uri.fromFile(rxPhotoPicker.getFileUtil().createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
                     String realPathFromURI = rxPhotoPicker.getFileUtil().getRealPathFromURI(data.getData());
-                    File file = new File(realPathFromURI);
-                    if(file.exists())
-                        CropingIMG(Uri.fromFile(file), cropPictureUrl);
-                    else
+                    if(realPathFromURI != null && !TextUtils.isEmpty(realPathFromURI)) {
+                        File file = new File(realPathFromURI);
+                        if (file.exists()) {
+                            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                                CropingIMG(FileProvider.getUriForFile(rxPhotoPicker.getContext(), rxPhotoPicker.getContext().getApplicationContext().getPackageName() + ".provider", file), cropPictureUrl);
+                            } else
+                                CropingIMG(Uri.fromFile(file), cropPictureUrl);
+                        } else
+                            CropingIMG(data.getData(), cropPictureUrl);
+                    } else
                         CropingIMG(data.getData(), cropPictureUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
