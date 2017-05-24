@@ -11,8 +11,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +108,12 @@ public class PhotoActivity extends Activity {
             if(getIntent().getBooleanExtra(ALLOW_IMAGE_CROP, false)) {
                 try {
                     cropPictureUrl = Uri.fromFile(rxPhotoPicker.getFileUtil().createImageTempFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
-                    CropingIMG(data.getData(), cropPictureUrl);
+                    String realPathFromURI = rxPhotoPicker.getFileUtil().getRealPathFromURI(data.getData());
+                    File file = new File(realPathFromURI);
+                    if(file.exists())
+                        CropingIMG(Uri.fromFile(file), cropPictureUrl);
+                    else
+                        CropingIMG(data.getData(), cropPictureUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
                     rxPhotoPicker.onImagePicked(Uri.EMPTY);
@@ -224,9 +231,11 @@ public class PhotoActivity extends Activity {
                     }
                     pictureChooseIntent[0].setType("image/*");
                     chooseCode[0] = Constant.SELECT_PHOTO;
-                    startActivityForResult(pictureChooseIntent[0], chooseCode[0]);
+                    startActivityForResult(Intent.createChooser(pictureChooseIntent[0],"Select Picture"), chooseCode[0]);
                 }
                 break;
         }
     }
+
+
 }
