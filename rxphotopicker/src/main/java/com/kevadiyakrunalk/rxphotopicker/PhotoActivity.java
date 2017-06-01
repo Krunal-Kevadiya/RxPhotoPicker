@@ -98,10 +98,32 @@ public class PhotoActivity extends Activity {
             if (clipData != null) {
                 int size = clipData.getItemCount();
                 for (int i = 0; i < size; i++) {
-                    imageUris.add(clipData.getItemAt(i).getUri());
+                    String realPathFromURI = rxPhotoPicker.getFileUtil().getRealPathFromURI(clipData.getItemAt(i).getUri());
+                    if(realPathFromURI != null && !TextUtils.isEmpty(realPathFromURI)) {
+                        File file = new File(realPathFromURI);
+                        if (file.exists()) {
+                            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                                imageUris.add(FileProvider.getUriForFile(rxPhotoPicker.getContext(), rxPhotoPicker.getContext().getApplicationContext().getPackageName() + ".provider", file));
+                            } else
+                                imageUris.add(Uri.fromFile(file));
+                        } else
+                            imageUris.add(clipData.getItemAt(i).getUri());
+                    } else
+                        imageUris.add(clipData.getItemAt(i).getUri());
                 }
             } else {
-                imageUris.add(data.getData());
+                String realPathFromURI = rxPhotoPicker.getFileUtil().getRealPathFromURI(data.getData());
+                if(realPathFromURI != null && !TextUtils.isEmpty(realPathFromURI)) {
+                    File file = new File(realPathFromURI);
+                    if (file.exists()) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                            imageUris.add(FileProvider.getUriForFile(rxPhotoPicker.getContext(), rxPhotoPicker.getContext().getApplicationContext().getPackageName() + ".provider", file));
+                        } else
+                            imageUris.add(Uri.fromFile(file));
+                    } else
+                        imageUris.add(data.getData());
+                } else
+                    imageUris.add(data.getData());
             }
             rxPhotoPicker.onImagesPicked(imageUris);
             finish();
@@ -127,7 +149,20 @@ public class PhotoActivity extends Activity {
                     finish();
                 }
             } else {
-                rxPhotoPicker.onImagePicked(data.getData());
+                Uri uri = null;
+                String realPathFromURI = rxPhotoPicker.getFileUtil().getRealPathFromURI(data.getData());
+                if(realPathFromURI != null && !TextUtils.isEmpty(realPathFromURI)) {
+                    File file = new File(realPathFromURI);
+                    if (file.exists()) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                            uri = FileProvider.getUriForFile(rxPhotoPicker.getContext(), rxPhotoPicker.getContext().getApplicationContext().getPackageName() + ".provider", file);
+                        } else
+                            uri = Uri.fromFile(file);
+                    } else
+                        uri = data.getData();
+                } else
+                    uri = data.getData();
+                rxPhotoPicker.onImagePicked(uri);
                 finish();
             }
         }
@@ -157,6 +192,7 @@ public class PhotoActivity extends Activity {
         int size = list.size();
         if (size == 0) {
             Toast.makeText(this, "Cann't find image croping app", Toast.LENGTH_SHORT).show();
+            rxPhotoPicker.onImagePicked(sourceImage);
             finish();
         } else {
             for (ResolveInfo resolvedIntentInfo : list) {
