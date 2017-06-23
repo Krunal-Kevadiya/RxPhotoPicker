@@ -67,6 +67,9 @@ public class FileUtil {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
         String imageFileName = "JPEG_" + timeStamp + "_";
+        if (!filePathDir.exists())
+            filePathDir.mkdirs();
+
         return File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -302,10 +305,9 @@ public class FileUtil {
     private String getFilename() {
         String IMAGE_DIRECTORY_NAME = "/." + getApplicationName();
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), IMAGE_DIRECTORY_NAME);
-        if (!mediaStorageDir.exists()) {
-            //noinspection ResultOfMethodCallIgnored
+        if (!mediaStorageDir.exists())
             mediaStorageDir.mkdirs();
-        }
+
         return (mediaStorageDir.getAbsolutePath() + "/" + "Avatar" + ".jpg");
 
     }

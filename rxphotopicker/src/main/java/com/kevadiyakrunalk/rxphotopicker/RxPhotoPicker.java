@@ -54,6 +54,9 @@ public class RxPhotoPicker {
     public RxPhotoPicker with(Context ctx) {
         context = ctx;
         fileUtil = new FileUtil(context);
+        File filePathDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        if (!filePathDir.exists())
+            filePathDir.mkdirs();
         return sSingleton;
     }
 
